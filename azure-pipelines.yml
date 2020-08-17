@@ -18,3 +18,4 @@ steps:
     sdk: 'iphoneos'
     scheme: 'ENACommunity'
     packageApp: false
+    args: '-UseModernBuildSystem=NO'
