@@ -11,13 +11,6 @@ pool:
   vmImage: 'macos-latest'
 
 steps:
-- task: CmdLine@2
-  inputs:
-    script: |
-      brew install swiftlint
-      xcode-select --install
-      cd src/xcode && bundle install --path vendor/bundle
-
 - task: Xcode@5
   inputs:
     actions: 'build'
