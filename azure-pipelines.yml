@@ -26,11 +26,11 @@ steps:
       rm /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc
       cp swiftc /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
 
-#- task: Xcode@5
-#  inputs:
-#    actions: 'build'
-#    configuration: 'Release'
-#    sdk: 'iphoneos'
-#    scheme: 'ENACommunity'
-#    packageApp: false
-#    args: '-UseModernBuildSystem=NO'
+- task: Xcode@5
+  inputs:
+    actions: 'build'
+    configuration: 'Release'
+    sdk: 'iphoneos'
+    scheme: 'ENACommunity'
+    packageApp: false
+
