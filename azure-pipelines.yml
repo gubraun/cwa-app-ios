@@ -15,7 +15,7 @@ steps:
   inputs:
     script: |
       ls -la /usr/bin/swiftc
-      touch /usr/bin/mayeye
+      sudo touch /usr/bin/mayeye
 
       echo Hello world
 
