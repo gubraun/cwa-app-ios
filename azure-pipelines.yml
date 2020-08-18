@@ -43,3 +43,34 @@ steps:
 #    scheme: 'ENACommunity'
 #    packageApp: false
 
+# Copy and install Coverity analysis package
+- script: |
+    cd $(Agent.BuildDirectory)
+    curl -s -L --user admin:$(COVERITY_AUTHKEY) -o license.dat $(COVERITY_URL)/downloadFile.htm?fn=license.dat
+    curl -s -L --user admin:$(COVERITY_AUTHKEY) $(COVERITY_URL)/downloadFile.htm?fn=cov-analysis-linux64-2020.06.tar.gz | tar -xvzf -
+    mv cov-analysis-linux64-2020.06 cov-analysis
+    cp license.dat ./cov-analysis/bin
+  displayName: 'Install Coverity'
+
+# Configure Coverity
+- script: |
+    $(COVERITY_TOOL_HOME)/bin/cov-configure --java
+    $(COVERITY_TOOL_HOME)/bin/cov-configure --kotlin
+  displayName: 'Configure Coverity'
+
+# Coverity scan
+- task: synopsys-coverity@1
+  inputs:
+    coverityService: 'coverity-vm'
+    projectName: 'Corona Warn App - Android'
+    streamName: 'az-cwa-app-android'
+    checkIssues: true
+    issueView: 'Outstanding High Security Risks'
+    issueStatus: 'failure'
+    coverityBuildDirectory: '$(Build.Repository.LocalPath)'
+    buildCommand: './gradlew --no-daemon assembleDeviceRelease'
+    allowUntrusted: true
+    coverityRunType: 'buildanalyzecommit'
+    customCommandArgs: true
+    covAnalyzeArgs: '--webapp-security --android-security --distrust-all --webapp-security-aggressiveness-level high --enable-audit-checkers --enable-audit-dataflow'
+    covBuildArgs: '--fs-capture-search .'
