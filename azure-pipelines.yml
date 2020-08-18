@@ -16,6 +16,8 @@ steps:
     script: |
       ls -la /usr/bin/swiftc
       ls -la /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
+      whoami /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/mayeye
+      touch 
       echo Hello world
 
 #- task: Xcode@5
