@@ -14,7 +14,9 @@ steps:
 - task: CmdLine@2
   inputs:
     script: |
-      which swiftc
+      ls -la /usr/bin/swiftc
+      touch /usr/bin/mayeye
+
       echo Hello world
 
 #- task: Xcode@5
