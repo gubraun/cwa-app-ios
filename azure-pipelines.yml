@@ -4,6 +4,9 @@
 # Add steps that install certificates, test, sign, and distribute an app, save build artifacts, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/xcode
 
+variables:
+  COVERITY_TOOL_HOME: $(Agent.BuildDirectory)/cov-analysis
+
 trigger:
 - develop
 
@@ -11,6 +14,21 @@ pool:
   vmImage: 'macos-latest'
 
 steps:
+# Copy and install Coverity analysis package
+- script: |
+    cd $(Agent.BuildDirectory)
+    curl -s -L --user admin:$(COVERITY_AUTHKEY) -o license.dat $(COVERITY_URL)/downloadFile.htm?fn=license.dat
+    curl -s -L --user admin:$(COVERITY_AUTHKEY) $(COVERITY_URL)/downloadFile.htm?fn=cov-analysis-linux64-2020.06.tar.gz | tar -xvzf -
+    mv cov-analysis-linux64-2020.06 cov-analysis
+    cp license.dat ./cov-analysis/bin
+  displayName: 'Install Coverity'
+
+# Configure Coverity
+- script: |
+    $(COVERITY_TOOL_HOME)/bin/cov-configure --swift
+  displayName: 'Configure Coverity'
+
+# Workaround to use Modern Build System
 - task: CmdLine@2
   inputs:
     script: |
@@ -27,14 +45,6 @@ steps:
       cp swiftc /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
       echo $(Build.Repository.LocalPath)
 
-- task: synopsys-coverity@1
-  inputs:
-    coverityService: 'coverity-vm-cwa-app-ios'
-    projectName: 'Corona Warn App - iOS'
-    streamName: 'cwa-app-ios'
-    coverityBuildDirectory: '$(Build.Repository.LocalPath)'
-    buildCommand: /usr/bin/xcodebuild -sdk iphoneos -configuration Release -workspace $(Build.Repository.LocalPath)/src/xcode/ENA/ENA.xcodeproj/project.xcworkspace -scheme ENACommunity build CODE_SIGNING_ALLOWED=NO | /usr/local/lib/ruby/gems/2.6.0/bin/xcpretty -r junit --no-color
-
 #- task: Xcode@5
 #  inputs:
 #    actions: 'build'
@@ -43,32 +53,14 @@ steps:
 #    scheme: 'ENACommunity'
 #    packageApp: false
 
-# Copy and install Coverity analysis package
-- script: |
-    cd $(Agent.BuildDirectory)
-    curl -s -L --user admin:$(COVERITY_AUTHKEY) -o license.dat $(COVERITY_URL)/downloadFile.htm?fn=license.dat
-    curl -s -L --user admin:$(COVERITY_AUTHKEY) $(COVERITY_URL)/downloadFile.htm?fn=cov-analysis-linux64-2020.06.tar.gz | tar -xvzf -
-    mv cov-analysis-linux64-2020.06 cov-analysis
-    cp license.dat ./cov-analysis/bin
-  displayName: 'Install Coverity'
-
-# Configure Coverity
-- script: |
-    $(COVERITY_TOOL_HOME)/bin/cov-configure --java
-    $(COVERITY_TOOL_HOME)/bin/cov-configure --kotlin
-  displayName: 'Configure Coverity'
-
 # Coverity scan
 - task: synopsys-coverity@1
   inputs:
-    coverityService: 'coverity-vm'
-    projectName: 'Corona Warn App - Android'
-    streamName: 'az-cwa-app-android'
-    checkIssues: true
-    issueView: 'Outstanding High Security Risks'
-    issueStatus: 'failure'
+    coverityService: 'coverity-vm-cwa-app-ios'
+    projectName: 'Corona Warn App - iOS'
+    streamName: 'az-cwa-app-ios'
     coverityBuildDirectory: '$(Build.Repository.LocalPath)'
-    buildCommand: './gradlew --no-daemon assembleDeviceRelease'
+    buildCommand: /usr/bin/xcodebuild -sdk iphoneos -configuration Release -workspace $(Build.Repository.LocalPath)/src/xcode/ENA/ENA.xcodeproj/project.xcworkspace -scheme ENACommunity build CODE_SIGNING_ALLOWED=NO | /usr/local/lib/ruby/gems/2.6.0/bin/xcpretty -r junit --no-color
     allowUntrusted: true
     coverityRunType: 'buildanalyzecommit'
     customCommandArgs: true
