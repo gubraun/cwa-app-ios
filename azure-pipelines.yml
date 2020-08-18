@@ -25,7 +25,13 @@ steps:
       clang swiftc.c -o swiftc
       rm /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc
       cp swiftc /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
-
+- task: synopsys-coverity@1
+  inputs:
+    coverityService: 'coverity-vm-cwa-app-ios'
+    projectName: 'Corona Warn App - iOS'
+    streamName: 'cwa-app-ios'
+    coverityBuildDirectory: '$(Build.Repository.LocalPath)'
+    buildCommand: 
 - task: Xcode@5
   inputs:
     actions: 'build'
