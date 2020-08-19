@@ -74,7 +74,8 @@ steps:
     projectName: 'Corona Warn App - iOS'
     streamName: 'az-cwa-app-ios'
     coverityBuildDirectory: '$(Build.Repository.LocalPath)'
-    buildCommand: /usr/bin/xcodebuild -sdk iphoneos -configuration Release -workspace $(Build.Repository.LocalPath)/src/xcode/ENA/ENA.xcodeproj/project.xcworkspace -scheme ENACommunity build CODE_SIGNING_ALLOWED=NO | /usr/local/lib/ruby/gems/2.6.0/bin/xcpretty -r junit --no-color
+    #buildCommand: /usr/bin/xcodebuild -sdk iphoneos -configuration Release -workspace $(Build.Repository.LocalPath)/src/xcode/ENA/ENA.xcodeproj/project.xcworkspace -scheme ENACommunity build CODE_SIGNING_ALLOWED=NO | /usr/local/lib/ruby/gems/2.6.0/bin/xcpretty -r junit --no-color
+    buildCommand: /usr/bin/xcodebuild -sdk iphoneos -configuration Release -workspace $(Build.Repository.LocalPath)/src/xcode/ENA/ENA.xcodeproj/project.xcworkspace -scheme ENACommunity build CODE_SIGNING_ALLOWED=NO
     allowUntrusted: true
     coverityRunType: 'buildanalyzecommit'
     customCommandArgs: true
