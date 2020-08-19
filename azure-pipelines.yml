@@ -14,7 +14,15 @@ pool:
   vmImage: 'macos-latest'
 
 steps:
-# Copy and install Coverity analysis package
+# Cache Coverity installation (good for MacOS, as installation take time)
+- task: Cache@2
+  inputs:
+    key: '"coverity-analysis-2020.06" | "$(Agent.OS)"'
+    path: $(COVERITY_TOOL_HOME)
+    cacheHitVar: CACHE_RESTORED
+  displayName: 'Cache Coverity Tool Installation'
+
+# Copy and install Coverity analysis package (not not cached)
 - script: |
     cd $(Agent.BuildDirectory)
     curl -s -L --user admin:$(COVERITY_AUTHKEY) -o license.dat $(COVERITY_URL)/downloadFile.htm?fn=license.dat
@@ -22,13 +30,16 @@ steps:
     bash cov-analysis-macosx-2020.06.sh -q --installation.dir=$(Agent.BuildDirectory)/cov-analysis-macosx-2020.06 --license.region=6 --license.agreement=agree --license.type.choice=0 --license.cov.path=$(Agent.BuildDirectory)/license.dat --component.cov-wizard=false --component.dotnet-sdk=false --component.skip.documentation=true 
     mv cov-analysis-macosx-2020.06 cov-analysis
     cp license.dat ./cov-analysis/bin
+  condition: ne(variables.CACHE_RESTORED, 'true')
   displayName: 'Install Coverity'
 
-#bash <(curl -s -L --user admin:$(COVERITY_AUTHKEY) $(COVERITY_URL)/downloadFile.htm?fn=cov-analysis-macosx-2020.06.sh) -q --installation.dir=./cov-analysis-macosx-2020.06 --license.region=6 --license.agreement=agree --license.type.choice=0 --license.cov.path=./license.dat --component.cov-wizard=false --component.dotnet-sdk=false --component.skip.documentation=true 
+# Optimization?
+# bash <(curl -s -L --user admin:$(COVERITY_AUTHKEY) $(COVERITY_URL)/downloadFile.htm?fn=cov-analysis-macosx-2020.06.sh) -q --installation.dir=./cov-analysis-macosx-2020.06 --license.region=6 --license.agreement=agree --license.type.choice=0 --license.cov.path=./license.dat --component.cov-wizard=false --component.dotnet-sdk=false --component.skip.documentation=true 
 
 # Configure Coverity
 - script: |
     $(COVERITY_TOOL_HOME)/bin/cov-configure --swift
+  condition: ne(variables.CACHE_RESTORED, 'true')
   displayName: 'Configure Coverity'
 
 # Workaround to use Modern Build System
