@@ -18,7 +18,7 @@ steps:
 - script: |
     cd $(Agent.BuildDirectory)
     curl -s -L --user admin:$(COVERITY_AUTHKEY) -o license.dat $(COVERITY_URL)/downloadFile.htm?fn=license.dat
-    curl -s -L --user admin:$(COVERITY_AUTHKEY) $(COVERITY_URL)/downloadFile.htm?fn=cov-analysis-linux64-2020.06.tar.gz | tar -xvzf -
+    bash <(curl -s -L -user admin:$(COVERITY_AUTHKEY) $(COVERITY_URL)/downloadFile.htm?fn=cov-analysis-macosx-2020.06.sh) -q --installation.dir=./cov-analysis-macosx-2020.06 --license.region=6 --license.agreement=agree --license.type.choice=0 --license.cov.path=./license.dat --component.cov-wizard=false --component.dotnet-sdk=false --component.skip.documentation=true 
     mv cov-analysis-linux64-2020.06 cov-analysis
     cp license.dat ./cov-analysis/bin
   displayName: 'Install Coverity'
