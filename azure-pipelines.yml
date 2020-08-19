@@ -82,13 +82,9 @@ steps:
     covAnalyzeArgs: '--webapp-security --android-security --distrust-all --webapp-security-aggressiveness-level high --enable-audit-checkers --enable-audit-dataflow'
     covBuildArgs: '--fs-capture-search .'
 
-- task: CmdLine@2
-  inputs:
-    script: ls -la $(Agent.BuildDirectory)/idir/
-
 - task: ArchiveFiles@2
   inputs:
-    rootFolderOrFile: '$(Agent.BuildDirectory)/idir/build-log.txt'
+    rootFolderOrFile: '$(Build.Repository.LocalPath)/idir/build-log.txt'
     includeRootFolder: false
     archiveType: 'zip'
     archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
