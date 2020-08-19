@@ -41,7 +41,8 @@ steps:
     $(COVERITY_TOOL_HOME)/bin/cov-configure --swift
     $(COVERITY_TOOL_HOME)/bin/cov-configure --delete-compiler-config template-swift-config-0 
     $(COVERITY_TOOL_HOME)/bin/cov-configure --delete-compiler-config template-swiftc-config-0 
-    $(COVERITY_TOOL_HOME)/bin/cov-configure --swift --xml-option ":<expand><options><replace_arg_regex><replace>(.*)\\\\\s(.*)\\\\\s(.*)\\\\\s(.*)\.swift</replace><with>\$1 \$2 \$3 \$4.swift</with></replace_arg_regex></options></expand>" --xml-option ":<expand><options><replace_arg_regex><replace>(.*)\\\\\s(.*)\\\\\s(.*)\.swift</replace><with>\$1 \$2 \$3.swift</with></replace_arg_regex></options></expand>" --xml-option ":<expand><options><replace_arg_regex><replace>(.*)\\\\\s(.*)\.swift</replace><with>\$1 \$2.swift</with></replace_arg_regex></options></expand>"
+    $(COVERITY_TOOL_HOME)/bin/cov-configure --swift --xml-option ":<expand><options><replace_arg_regex><replace>(.*)\\\\\s(.*)\\\\\s(.*)\\\\\s(.*)\.swift</replace><with>\$1 \$2 \$3 \$4.swift</with></replace_arg_regex></options></expand>" --xml-option ":<expand><options><replace_arg_regex><replace>(.*)\\\\\s(.*)\\\\\s(.*)\.swift</replace><with>\$1 \$2 \$3.swift</with></replace_arg_regex></options></expand>" --xml-option ":<expand><options><replace_arg_regex><replace>(.*)\\\\\s(.*)\.swift</replace><with>\$1 \$2.swift</with></replace_arg_regex></options></expand>"
+
   #condition: ne(variables.CACHE_RESTORED, 'true')
   displayName: 'Configure Coverity'
 
