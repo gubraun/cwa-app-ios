@@ -47,21 +47,21 @@ steps:
   displayName: 'Configure Coverity'
 
 # Workaround to use Modern Build System
-- task: CmdLine@2
-  inputs:
-    script: |
-      cat >swiftc.c <<EOL
-      #include <unistd.h>
-      const char driver_mode[7] = "swiftc";
-      int main(int argc, char *argv[]) {
-        argv[0] = (char *)driver_mode;
-        return execv("/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift", argv);
-      }
-      EOL
-      clang swiftc.c -o swiftc
-      rm /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc
-      cp swiftc /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
-      echo $(Build.Repository.LocalPath)
+#- task: CmdLine@2
+#  inputs:
+#    script: |
+#      cat >swiftc.c <<EOL
+#      #include <unistd.h>
+#      const char driver_mode[7] = "swiftc";
+#      int main(int argc, char *argv[]) {
+#        argv[0] = (char *)driver_mode;
+#        return execv("/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift", argv);
+#      }
+#      EOL
+#      clang swiftc.c -o swiftc
+#      rm /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc
+#      cp swiftc /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
+#      echo $(Build.Repository.LocalPath)
 
 #- task: Xcode@5
 #  inputs:
